@@ -1,0 +1,29 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Opt-in, for repos whose CI tests every change: small updates to stable versions merge themselves once every check passes and the release is three days old. Use after default, never on a repo where a merge is a deploy without a staging step.",
+  "packageRules": [
+    {
+      "description": "Minor, patch and digest updates of versions 1.0 and later.",
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin", "pinDigest"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
+    },
+    {
+      "description": "Never: a language or database minor, which behaves like a major.",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["python", "node", "postgres", "redis"],
+      "matchUpdateTypes": ["minor", "major"],
+      "automerge": false
+    },
+    {
+      "description": "Never: anything without a checked release age (GHCR images, lock file refreshes).",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/**"],
+      "automerge": false
+    },
+    {
+      "matchUpdateTypes": ["lockFileMaintenance", "major"],
+      "automerge": false
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+# Checks every preset with Renovate's own validator before it can reach main, where every
+# repo that extends it picks it up on its next run. The image is pinned; Renovate updates it.
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/renovatebot/renovate:44.239.1
+      # The image's own user can't write the workspace that checkout uses.
+      options: --user root
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate the presets and this repo's own config
+        run: renovate-config-validator --strict default.json automerge.json renovate.json
