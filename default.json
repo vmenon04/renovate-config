@@ -1,0 +1,44 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "vmenon04's baseline: weekly updates, each release at least three days old, everything pinned exactly, nothing merged without a person. Repos opt into automatic merging with the automerge preset.",
+  "extends": [
+    "config:best-practices",
+    "schedule:weekly",
+    ":maintainLockFilesWeekly"
+  ],
+  "timezone": "America/New_York",
+  "minimumReleaseAge": "3 days",
+  "internalChecksFilter": "strict",
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "description": "GHCR gives no release dates, so the three-day wait can't be checked there. Without this its updates (my own images, Sure) would be held forever; with it they come at once, for a person to review.",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/**"],
+      "minimumReleaseAgeBehaviour": "timestamp-optional"
+    },
+    {
+      "description": "One PR a week for GitHub Actions, majors aside.",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"],
+      "groupName": "GitHub Actions"
+    },
+    {
+      "description": "A new minor of a language or database (Python 3.12 to 3.13, say) changes behaviour like a major.",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["python", "node", "postgres", "redis"],
+      "matchUpdateTypes": ["minor", "major"],
+      "addLabels": ["runtime"]
+    },
+    {
+      "description": "Majors stand out.",
+      "matchUpdateTypes": ["major"],
+      "addLabels": ["major"]
+    },
+    {
+      "description": "A lock file refresh pulls in whatever is newest: the three-day wait doesn't cover it, so say so.",
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "prBodyNotes": ["The three-day minimum release age is not enforced for lock file maintenance. Check that nothing in it was released in the last few days before merging."]
+    }
+  ]
+}

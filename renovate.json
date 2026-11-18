@@ -1,0 +1,5 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "This repo keeps its own validator image and Actions up to date with the presets it publishes.",
+  "extends": ["local>vmenon04/renovate-config"]
+}
